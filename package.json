@@ -1,0 +1,16 @@
+{
+	"name": "esbuild-vue-plugin",
+	"version": "0.1.0",
+	"description": "Vue plugin for esbuild",
+	"main": "main.js",
+	"peerDependencies": {
+		"esbuild": "^0.8.0",
+		"vue-template-compiler": "^2.6.0"
+	},
+	"keywords": [
+		"esbuild",
+		"vue"
+	],
+	"author": "Thomas Nadin <nadinengland@gmail.com>",
+	"license": "ISC"
+}
