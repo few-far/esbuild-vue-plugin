@@ -1,6 +1,6 @@
 # Vue plugin for [esbuild](https://esbuild.github.io/)
 
-Supports compiling simple Single File Component .vue files in with esbuild.
+Supports compiling simple Single File Component .vue files.
 
 ```
 <template>
@@ -12,11 +12,11 @@ Supports compiling simple Single File Component .vue files in with esbuild.
 </script>
 ```
 
-Script section is created as virtual file to export and template is compiled using [`vue-template-compiler`](https://www.npmjs.com/package/vue-template-compiler):
+The component is compiled into a ES Module that uses esbuild's virtual file system to import the various sections of the SFC. Script section is imported as reexported as is with the template section being compiled by [`vue-template-compiler`](https://www.npmjs.com/package/vue-template-compiler) and added the default export:
 
 ```
-export * from '${args.path}?type=script';
-import Component from '${args.path}?type=script';
+export * from 'Component.vue?type=script';
+import Component from 'Component.vue?type=script';
 Component.render = function (createElement) { return createElement('div'); };
 export default Component;
 ```
