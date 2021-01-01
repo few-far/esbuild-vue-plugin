@@ -107,7 +107,7 @@ async function onVueLoad(args) {
  */
 module.exports = function vuePlugin() {
 	return {
-		name: 'vue',
+		name: 'esbuild-vue-plugin',
 
 		setup(build) {
 			// In the file namespace, handle any vue file as a module.
