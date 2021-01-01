@@ -1,6 +1,6 @@
 {
 	"name": "esbuild-vue-plugin",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Vue plugin for esbuild",
 	"repository": "github:few-far/esbuild-vue-plugin",
 	"main": "main.js",
