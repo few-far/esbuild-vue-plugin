@@ -42,7 +42,10 @@ async function onVueScriptLoad(args) {
 		return { contents: 'export default {};' };
 	}
 
-	return { contents: match[1] };
+	return {
+		resolveDir: args.path.replace(/\/[^/]+$/, ''),
+		contents: match[1],
+	};
 }
 
 /**
@@ -82,37 +85,45 @@ async function onVueLoad(args) {
 		};
 	}
 
+	const render = `function () { ${ compileResult.render } }`;
+	const staticRenderFns = compileResult.staticRenderFns.map(body => `function () { ${ body }}`).join(',');
+
 	return {
+		resolveDir: args.path.replace(/\/[^/]+$/, ''),
 		contents: `
-			export * from '${args.path}?type=script';
-			import Component from '${args.path}?type=script';
-			Component.render = function () { ${compileResult.render} };
-			// Component.staticRenderFns = [];
+			export * from '${ args.path }?type=script';
+			import Component from '${ args.path }?type=script';
+			Component.render = ${ render };
+			Component.staticRenderFns = [${ staticRenderFns }];
 			export default Component;
 		`,
 	};
 }
 
-/** @type esbuild.Plugin */
-const plugin = {
-	name: 'vue',
+/**
+ * Creates an instance of the plugin, no configuration options are available yet.
+ *
+ * @returns {esbuild.Plugin}
+ */
+module.exports = function vuePlugin() {
+	return {
+		name: 'vue',
 
-	setup(build) {
-		// In the file namespace, handle any vue file as a module.
-		build.onResolve({ filter: /\.vue$/ }, args => ({
-			path: `${ args.resolveDir }/${ args.path }`,
-			namespace: 'vue',
-		}));
+		setup(build) {
+			// In the file namespace, handle any vue file as a module.
+			build.onResolve({ filter: /\.vue$/ }, args => ({
+				path: `${ args.resolveDir }/${ args.path.replace(/^\//, '') }`,
+				namespace: 'vue',
+			}));
 
-		// Handle the individual sections of the SFC as separate imports.
-		build.onResolve({ filter: /\.vue\?type=script$/ }, args => ({
-			path: `${ args.resolveDir }/${ args.path }`,
-			namespace: 'vue',
-		}));
+			// Handle the individual sections of the SFC as separate imports.
+			build.onResolve({ filter: /\.vue\?type=script$/ }, args => ({
+				path: args.path,
+				namespace: 'vue',
+			}));
 
-		build.onLoad({ filter: /\.vue$/, namespace: 'vue' }, onVueLoad);
-		build.onLoad({ filter: /\.vue\?type=script$/, namespace: 'vue' }, onVueScriptLoad);
-	},
+			build.onLoad({ filter: /\.vue$/, namespace: 'vue' }, onVueLoad);
+			build.onLoad({ filter: /\.vue\?type=script$/, namespace: 'vue' }, onVueScriptLoad);
+		},
+	};;
 };
-
-module.exports = plugin;
