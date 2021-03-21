@@ -91,11 +91,10 @@ async function onVueLoad(args) {
 	return {
 		resolveDir: args.path.replace(/\/[^/]+$/, ''),
 		contents: `
-			export * from '${ args.path }?type=script';
-			import Component from '${ args.path }?type=script';
-			Component.render = ${ render };
-			Component.staticRenderFns = [${ staticRenderFns }];
-			export default Component;
+			const script = require('${ args.path }?type=script');
+			script.default.render = ${ render };
+			script.default.staticRenderFns = [${ staticRenderFns }];
+			module.exports = script;
 		`,
 	};
 }
