@@ -24,7 +24,7 @@ export default Component;
 ## Usage
 
 ```
-$ npm install --save-dev "vue-template-compiler@2"
+$ npm install --save-dev esbuild-vue-plugin "vue-template-compiler@2"
 ```
 
 [Follow instructions](https://esbuild.github.io/plugins/#using-plugins) on using esbuild plugins.
